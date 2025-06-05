@@ -56,6 +56,7 @@ class Usuario(Base):
     nivel_dificuldade = Column(Integer, default=1)
     acertos_consecutivos = Column(Integer, default=0)
     exercicios = relationship("RespostaExercicio", back_populates="usuario")
+    testes_realizados = relationship("TesteRealizado", back_populates="usuario")
 
 class Exercicio(Base):
     """
@@ -99,12 +100,38 @@ class RespostaExercicio(Base):
     usuario = relationship("Usuario", back_populates="exercicios")
     exercicio = relationship("Exercicio")
 
+    # database/models.py
+class TesteRealizado(Base):
+    __tablename__ = 'testes_realizados'
+    
+    id = Column(Integer, primary_key=True)
+    usuario_id = Column(Integer, ForeignKey('usuarios.id'))
+    categoria = Column(String(50))
+    tempo_segundos = Column(Integer)
+    data_realizacao = Column(DateTime)
+    usuario = relationship("Usuario", back_populates="testes_realizados")
+
+class QuestaoTeste(Base):
+    __tablename__ = 'questoes_teste'
+    
+    id = Column(Integer, primary_key=True)
+    teste_id = Column(Integer, ForeignKey('testes_realizados.id'))
+    numero_questao = Column(Integer)
+    resposta_usuario = Column(String(1))
+    resposta_correta = Column(String(1))
+    acertou = Column(Boolean)
+
+# Adicione à classe Usuario:
+testes_realizados = relationship("TesteRealizado", back_populates="usuario")
+
 # Criação das tabelas no banco de dados
 Base.metadata.create_all(engine)
 
 # Configuração da sessão para interação com o banco de dados
 SessionLocal = sessionmaker(bind=engine)
 Session = sessionmaker(bind=engine)  # Mantido para compatibilidade
+
+
 
 # Define os elementos disponíveis para importação ao utilizar `from database import *`
 __all__ = ['Session', 'Usuario', 'Exercicio', 'RespostaExercicio', 'Base']

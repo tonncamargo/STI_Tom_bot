@@ -11,7 +11,7 @@ from telegram.ext import (
 )
 from database.database import Session, Usuario
 from handlers import (
-    iniciar_teste, processar_resposta,
+    iniciar_selecao_categoria, processar_resposta,
     iniciar_exercicios, processar_exercicio, explicar_exercicio,
     toggle_chatbot, sair_chatbot, handle_chatbot_message,
     ver_progresso, selecionar_categoria_exercicio,
@@ -81,24 +81,22 @@ def main():
     # Crie o filtro e passe o contexto
     filtro_chatbot = FiltroModoChatbot()
 
-    # 1. Handler do chatbot (mensagens no modo Chatbot)
-    app.add_handler(MessageHandler(
-        filters.TEXT & ~filters.COMMAND & filtro_chatbot,
-        handle_chatbot_message
-    ))
-
-    # 2. Handler das mensagens de ajuda (quando o usuário escreve após clicar em "🆘 Ajuda")
-    app.add_handler(MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        processar_ajuda
-    ))
-
-    # 3. Handlers gerais
+    # Handlers principais
     app.add_handlers([
+        # Handler do chatbot
+        MessageHandler(filters.TEXT & ~filters.COMMAND & filtro_chatbot, handle_chatbot_message),
+        
+        # Handler das mensagens de ajuda
+        MessageHandler(filters.TEXT & ~filters.COMMAND, processar_ajuda),
+        
+        # Command handlers
         CommandHandler("start", start),
+        
+        # Callback query handlers
         CallbackQueryHandler(start, pattern="^menu_principal$"),
-        CallbackQueryHandler(iniciar_teste, pattern="^iniciar_teste$"),
-        CallbackQueryHandler(processar_resposta, pattern="^(A|B|C|D)$"),
+        CallbackQueryHandler(iniciar_selecao_categoria, pattern="^iniciar_teste$"),  # Corrigido aqui
+        CallbackQueryHandler(iniciar_selecao_categoria, pattern="^operacoes_inteiros$|^fracoes_porcentagem$|^regra_tres$|^equacoes$|^geometria$|^expressoes_algebricas$"),
+        CallbackQueryHandler(processar_resposta, pattern="^resp_\d+_[A-D]$"),
         CallbackQueryHandler(toggle_chatbot, pattern="^modo_chatbot$"),
         CallbackQueryHandler(sair_chatbot, pattern="^sair_chatbot$"),
         CallbackQueryHandler(iniciar_exercicios, pattern="^iniciar_exercicios$"),
