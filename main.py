@@ -11,7 +11,7 @@ from telegram.ext import (
 )
 from database.database import Session, Usuario
 from handlers import (
-    iniciar_selecao_categoria, processar_resposta,
+    iniciar_selecao_categoria, iniciar_teste_categoria, processar_resposta,
     iniciar_exercicios, processar_exercicio, explicar_exercicio,
     toggle_chatbot, sair_chatbot, handle_chatbot_message,
     ver_progresso, selecionar_categoria_exercicio,
@@ -85,18 +85,18 @@ def main():
     app.add_handlers([
         # Handler do chatbot
         MessageHandler(filters.TEXT & ~filters.COMMAND & filtro_chatbot, handle_chatbot_message),
-        
+
         # Handler das mensagens de ajuda
         MessageHandler(filters.TEXT & ~filters.COMMAND, processar_ajuda),
-        
+
         # Command handlers
         CommandHandler("start", start),
-        
+
         # Callback query handlers
         CallbackQueryHandler(start, pattern="^menu_principal$"),
-        CallbackQueryHandler(iniciar_selecao_categoria, pattern="^iniciar_teste$"),  # Corrigido aqui
-        CallbackQueryHandler(iniciar_selecao_categoria, pattern="^operacoes_inteiros$|^fracoes_porcentagem$|^regra_tres$|^equacoes$|^geometria$|^expressoes_algebricas$"),
-        CallbackQueryHandler(processar_resposta, pattern="^resp_\d+_[A-D]$"),
+        CallbackQueryHandler(iniciar_selecao_categoria, pattern="^iniciar_teste$"),
+        CallbackQueryHandler(iniciar_teste_categoria, pattern="^operacoes_inteiros$|^fracoes_porcentagem$|^regra_tres$|^equacoes$|^geometria$|^expressoes_algebricas$"),
+        CallbackQueryHandler(processar_resposta, pattern=r"^resp_\d+_[A-D]$"),
         CallbackQueryHandler(toggle_chatbot, pattern="^modo_chatbot$"),
         CallbackQueryHandler(sair_chatbot, pattern="^sair_chatbot$"),
         CallbackQueryHandler(iniciar_exercicios, pattern="^iniciar_exercicios$"),

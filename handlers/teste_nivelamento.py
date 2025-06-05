@@ -87,27 +87,25 @@ def gerar_questao(categoria: str) -> Tuple[str, str, List[str]]:
             ["A) 3", "B) 4", "C) 5", "D) 6"]
         )
 
-async def iniciar_selecao_categoria(update: Update, context: CallbackContext) -> None:
-    keyboard = [
-        [InlineKeyboardButton(nome, callback_data=tag)]
-        for nome, tag in CATEGORIAS
-    ]
-    
-    await update.message.reply_text(
-        "📚 Selecione uma categoria de teste:",
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
-    
-    # Verifica testes já realizados
-    with Session() as session:
-        usuario = session.query(Usuario).filter_by(
-            telegram_id=update.effective_user.id).first()
-            
-        if usuario:
-            testes_feitos = {t.categoria for t in usuario.testes_realizados}
-            for btn in keyboard:
-                if btn[0].callback_data in testes_feitos:
-                    btn[0].text += " ✅"
+async def iniciar_selecao_categoria(update: Update, context: CallbackContext):
+    try:
+        await update.callback_query.answer()
+        teclado = [
+            [InlineKeyboardButton("1️⃣ Operações com Números Naturais/Inteiros", callback_data="operacoes_inteiros")],
+            [InlineKeyboardButton("2️⃣ Frações/Porcentagem", callback_data="fracoes_porcentagem")],
+            [InlineKeyboardButton("3️⃣ Regra de Três", callback_data="regra_tres")],
+            [InlineKeyboardButton("4️⃣ Equações 1º/2º Grau", callback_data="equacoes")],
+            [InlineKeyboardButton("5️⃣ Geometria Plana/Espacial", callback_data="geometria")],
+            [InlineKeyboardButton("6️⃣ Expressões Algébricas", callback_data="expressoes_algebricas")],
+            [InlineKeyboardButton("🏠 Menu Principal", callback_data="menu_principal")]
+        ]
+        await update.callback_query.message.reply_text(
+            "🧪 Escolha uma categoria para iniciar o teste:",
+            reply_markup=InlineKeyboardMarkup(teclado)
+        )
+    except Exception as e:
+        logging.error(f"Erro ao iniciar seleção de categoria: {e}")
+
 
 async def iniciar_teste_categoria(update: Update, context: CallbackContext) -> None:
     query = update.callback_query

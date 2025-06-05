@@ -1,4 +1,5 @@
 from .teste_nivelamento import (
+    iniciar_teste_categoria,
     gerar_questao,
     iniciar_selecao_categoria,  # Substitui iniciar_teste
     enviar_questao_atual,      # Substitui enviar_questao
@@ -42,6 +43,7 @@ from .suporte import (
 
 __all__ = [
     # Teste nivelamento (atualizado)
+    'iniciar_teste_categoria',
     'gerar_questao', 
     'iniciar_selecao_categoria',  # Antigo 'iniciar_teste'
     'enviar_questao_atual',       # Antigo 'enviar_questao'
